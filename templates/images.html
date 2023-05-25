@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Imágenes</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Storage</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name File</th>
+            <th>Date</th>
+            <th>Hour</th>
+            <th>miniature</th>
+            <th>Location</th>
+            <th>Google Maps</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for image in images %}
+            <tr>
+                <td>{{ image.name }}</td>
+                <td>{{ image.date }}</td>
+                <td>{{ image.hour }}</td>
+                <td><img src="{{ image.url }}" class="img-thumbnail" alt="Imagen" width="100px"></td>
+                <td>{{ image.location }}</td>
+                <td>
+                    <a href="{{ image.button.url }}">
+                        <button {% if image.button.disable %}disabled{% endif %}>Open</button>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</body>
+</html>
