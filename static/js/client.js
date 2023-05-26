@@ -1,13 +1,13 @@
 const api = (() => {
     // Private
-    const url = 'http://localhost:5000';
+    const url = 'http://into.azurewebsites.net';
 
     const upload = (form, formData) => {
         return new Promise(
             (resolve, reject) => {
                 $.ajax({
                     type: form.method,
-                    url: url + '/' + form.action.split('/')[3],
+                    url: '/' + form.action.split('/')[3],
                     data: formData,
                     processData: false,
                     contentType: false,
@@ -27,7 +27,7 @@ const api = (() => {
             (resolve, reject) => {
                 $.ajax({
                     type: "GET",
-                    url: url + '/gallery',
+                    url: '/gallery',
                     success: function (response) {
                         resolve(response);
                     },
@@ -44,7 +44,7 @@ const api = (() => {
             (resolve, reject) => {
                 $.ajax({
                     type: "GET",
-                    url: url + '/charge',
+                    url: '/charge',
                     success: function (response) {
                         resolve(response);
                     },
