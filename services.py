@@ -3,35 +3,31 @@ import os
 from metadata import get_metadata_from_image, get_location_zone, get_date_hour
 
 
-def save_image(path, image):
+def save_image(path, image) -> str:
+    name = (
+        "".join(image.filename.split(" "))
+        .replace("(", "")
+        .replace(")", "")
+        .replace("-", "")
+    )
     # Save the image in the path
-    image.save(path + '/' + image.filename)
+    image.save(path + "/" + name)
+    return name
 
 
-def get_images_data_to_table(path):
+def get_images_data_to_table(path, name):
     # Get the list of files in the folder
-    file_names = os.listdir(path)
 
-    # Filter image files only (.jpg, .jpeg, .png, .gif)
-    image_files = [f for f in file_names if f.endswith(('.jpg', '.jpeg', '.png', '.gif'))]
+    metadata = get_metadata_from_image(path + "/" + name)
 
-    # Build the array with the data to be displayed in the table for each image.
-    images = []
-    for img in image_files:
-        metadata = get_metadata_from_image(path + '/' + img)
+    date_hour = get_date_hour(metadata)
+    location = get_location_zone(metadata)
 
-        date_hour = get_date_hour(metadata)
-        location = get_location_zone(metadata)
-
-        images.append({'name': os.path.splitext(img)[0],
-                       'date': date_hour[0],
-                       'hour': date_hour[1] if len(date_hour) > 1 else date_hour[0],
-                       'url': os.path.join(path, img),
-                       'location': location[0],
-                       'button': {
-                           'disable': False if len(location) > 1 else True,
-                           'url': location[1] if len(location) > 1 else ''
-                       }
-                       })
-
-    return images
+    return {
+            "name": os.path.splitext(name)[0],
+            "date": date_hour[0],   
+            "hour": date_hour[1] if len(date_hour) > 1 else date_hour[0],
+            "url": os.path.join(path, name),
+            "location": location[0],
+            "button": location[1] if len(location) > 1 else "",
+        }
