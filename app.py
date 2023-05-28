@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, jsonify
 from flask_gzip import Gzip
 from flask_cors import CORS
 
-from services import get_images_data_to_table, save_image
+from src.services import get_images_data_to_table, save_image
+from src.google_api_service import extract_images_from_drive_folder
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -29,7 +30,7 @@ def upload():
     if image.filename == '':
         return jsonify({'error': 'No image selected'}), 400
     
-    name = save_image('static/img', image)
+    name = save_image('../static/img', image)
     if name in FILE_NAMES:
         return jsonify({'error': 'Already Exist'}), 400
     
@@ -41,16 +42,16 @@ def upload():
 
 @app.route('/gallery')
 def gallery():
-    return get_images_data_to_table('static/img', FILE_NAMES[len(FILE_NAMES) - 1])
+    return get_images_data_to_table('../static/img', FILE_NAMES[len(FILE_NAMES) - 1])
 
 
 @app.route("/charge")
 def charge():
-    FILE_NAMES = os.listdir("static/img")
+    FILE_NAMES = os.listdir("../static/img")
     
     data = []
     for f in FILE_NAMES:
-        data.append(get_images_data_to_table('static/img', f))
+        data.append(get_images_data_to_table('../static/img', f))
         
     print(data)
     
