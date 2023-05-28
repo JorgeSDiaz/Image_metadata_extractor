@@ -1,6 +1,7 @@
 const app = (() => {
   // private
   const apiFlask = api;
+  const data_uploaded = [];
 
   const upload = () => {
     $(".upload").submit(function (event) {
@@ -21,7 +22,12 @@ const app = (() => {
   const init = () => {
     $(document).ready(function () {
       chargeTable();
-      upload();
+      $(document).ready(function() {
+        $("#driveButton").on("click", function() {
+          window.open("https://drive.google.com/drive/folders/1exVAksxzJS4knfayDY176WEUYva9pBqS?usp=sharing", "_blank");
+        });
+      });
+      // upload();
     });
   };
 
@@ -33,52 +39,35 @@ const app = (() => {
   }
 
   const addRow = (data) => {
-    console.log(data);
-    let tableBody = document.querySelector(".table tbody");
-
-    var newRow = document.createElement('tr');
-
-    var nameCell = document.createElement('td');
-    var dateCell = document.createElement('td');
-    var hourCell = document.createElement('td');
-    var miniatureCell = document.createElement('td');
-    var locationCell = document.createElement('td');
-    var mapsCell = document.createElement('td');
-
-    nameCell.textContent = data.name;
-    dateCell.textContent = data.date;
-    hourCell.textContent = data.hour;
-    locationCell.textContent = data.location;
-
-    var img = document.createElement('img');
-    img.src = data.url;
-    img.classList.add('img-fluid');
-    miniatureCell.appendChild(img);
-
-    var button = document.createElement('button');
-    console.log(data.button != "")
-    if (data.button != "") {
-      button.classList.add('btn', 'btn-success');
-      button.addEventListener('click', () => {
-        window.open(data.button, '_blank');
-      })
-    } else {
-      button.classList.add('btn', 'btn-danger');
-      button.setAttribute('disabled', 'disabled');
+    if (!(data_uploaded.includes(data.name))) {
+      let newRow = $("<tr></tr>");
+    
+      let nameCell = $("<td></td>").text(data.name);
+      let dateCell = $("<td></td>").text(data.date);
+      let hourCell = $("<td></td>").text(data.hour);
+      let miniatureCell = $("<td></td>");
+      let locationCell = $("<td></td>").text(data.location);
+      let mapsCell = $("<td></td>");
+    
+      let img = $("<img>").attr("src", data.url).addClass("img-fluid");
+      miniatureCell.append(img);
+    
+      let button = $("<button></button>").text("OPEN").css({"width": "200px", "height": "50px"});
+      if (data.button.startsWith('https')) {
+        button.addClass("btn btn-success").on("click", function() {
+          window.open(data.button, "_blank");
+        });
+      } else {
+        button.addClass("btn btn-danger").prop("disabled", true);
+      }
+      mapsCell.append(button);
+    
+      newRow.append(nameCell, dateCell, hourCell, miniatureCell, locationCell, mapsCell);
+    
+      $(".table tbody").append(newRow);
+      data_uploaded.push(data.name);
     }
-    button.textContent = "OPEN";
-    button.style.width = '200px';
-    button.style.height = '50px';
-    mapsCell.appendChild(button);
-
-    newRow.appendChild(nameCell);
-    newRow.appendChild(dateCell);
-    newRow.appendChild(hourCell);
-    newRow.appendChild(miniatureCell);
-    newRow.appendChild(locationCell);
-    newRow.appendChild(mapsCell);
-
-    tableBody.appendChild(newRow);
+    
   };
 
   const getRow = () => {

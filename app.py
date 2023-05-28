@@ -3,14 +3,15 @@ from flask import Flask, render_template, request, jsonify
 from flask_gzip import Gzip
 from flask_cors import CORS
 
-from src.services import get_images_data_to_table, save_image
-from src.google_api_service import extract_images_from_drive_folder
+from services import get_images_data_to_table, save_image
+from google_api_service import extract_images_from_drive_folder
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 gzip = Gzip(app)
 
 FILE_NAMES = []
+DATA = {}
 
 
 @app.route('/')
@@ -30,7 +31,7 @@ def upload():
     if image.filename == '':
         return jsonify({'error': 'No image selected'}), 400
     
-    name = save_image('../static/img', image)
+    name = save_image('static/img', image)
     if name in FILE_NAMES:
         return jsonify({'error': 'Already Exist'}), 400
     
@@ -42,20 +43,21 @@ def upload():
 
 @app.route('/gallery')
 def gallery():
-    return get_images_data_to_table('../static/img', FILE_NAMES[len(FILE_NAMES) - 1])
+    name = FILE_NAMES[len(FILE_NAMES) - 1]
+    DATA[name] = get_images_data_to_table('static/img', name)
+    return DATA.get(name)
 
 
 @app.route("/charge")
 def charge():
-    FILE_NAMES = os.listdir("../static/img")
-    
-    data = []
-    for f in FILE_NAMES:
-        data.append(get_images_data_to_table('../static/img', f))
+    extract_images_from_drive_folder('1exVAksxzJS4knfayDY176WEUYva9pBqS', 'static/img')
+    FILE_NAMES = os.listdir("static/img")
         
-    print(data)
-    
-    return data
+    for f in FILE_NAMES:
+        if f not in DATA.keys():
+            DATA[f] = get_images_data_to_table('static/img', f)
+        
+    return [data for data in DATA.values()]
 
 
 if __name__ == '__main__':

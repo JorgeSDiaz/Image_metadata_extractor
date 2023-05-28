@@ -12,23 +12,13 @@
     />
   </head>
   <body onload="app.init()">
-    <div class="container">
-      <form class="upload" action="/upload" method="POST" enctype="multipart/form-data">
-        <div class="form-group">
-          <label for="image">Seleccione una imagen:</label>
-          <input
-            type="file"
-            class="form-control-file"
-            id="image"
-            name="image"
-            accept="image/*"
-            required
-          />
-        </div>
-        <button type="submit" class="btn btn-primary"">Subir</button>
-      </form>
-    </div>
-
+    <button type="button" class="btn btn-warning btn-lg btn-block" id="driveButton">
+      <span class="btn-img">
+        <img src="/static/Google_Drive_logo.png" alt="Imagen" style="width: 40px;">
+      </span>
+      Drive
+    </button>
+    <br>
     <div class="container">
         <h1>Storage</h1>
         <div class="table-responsive">
@@ -48,6 +38,7 @@
         </table>
         </div>
     </div>
+    <div class="container"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>

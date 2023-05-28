@@ -1,4 +1,6 @@
 import io
+import os
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google.oauth2 import service_account
@@ -14,16 +16,22 @@ DRIVE = build('drive', 'v3', credentials=CREDENTIALS)
 def extract_images_from_drive_folder(folder_id: str, path: str) -> list[str]:
     file_names = []
 
-    results = DRIVE.files().list(q=f"'{folder_id}' in parents and trashed=false",
-                                 fields="files(id, name, mimeType)").execute()
+    results = DRIVE.files().list(
+        q=f"'{folder_id}' in parents and trashed=false",
+        fields="files(id, name, mimeType)",
+        orderBy="createdTime desc",
+        pageSize=10
+    ).execute()
+
     files = results.get('files', [])
+    file_names_in_path = os.listdir(path)
 
     for file in files:
         file_id = file['id']
         file_name = file['name']
         mime_type = file['mimeType']
 
-        if 'image' in mime_type:
+        if 'image' in mime_type and file_name not in file_names_in_path:
             destination_file = path + '/' + file_name
 
             request = DRIVE.files().get_media(fileId=file_id)
